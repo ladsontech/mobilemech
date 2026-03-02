@@ -34,6 +34,7 @@ class AuthService {
   }
 
   /// Register a new user with email, password, name, and role.
+  /// After registration, the user is signed out so they can log in manually.
   Future<void> register({
     required String email,
     required String password,
@@ -56,6 +57,9 @@ class AuthService {
         'role': role,
         'createdAt': FieldValue.serverTimestamp(),
       });
+
+      // Sign out after registration so user goes back to login screen
+      await _auth.signOut();
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
@@ -66,18 +70,37 @@ class AuthService {
     await _auth.signOut();
   }
 
+  /// Send a password reset email.
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    }
+  }
+
   /// Get the role of the current user from Firestore.
   Future<String?> getCurrentUserRole() async {
     final user = currentUser;
     if (user == null) return null;
 
-    final userDoc = await _firestore.collection('users').doc(user.uid).get();
+    try {
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
-    if (userDoc.exists && userDoc.data() != null) {
-      return userDoc.data()!['role'] as String?;
+      if (userDoc.exists && userDoc.data() != null) {
+        return userDoc.data()!['role'] as String?;
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
-    return null;
   }
+
+  /// Get the current user's display name.
+  String? get currentUserName => _auth.currentUser?.displayName;
+
+  /// Get the current user's email.
+  String? get currentUserEmail => _auth.currentUser?.email;
 
   /// Convert Firebase auth exceptions to user-friendly messages.
   String _handleAuthException(FirebaseAuthException e) {

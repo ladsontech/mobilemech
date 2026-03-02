@@ -29,29 +29,12 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final role = await _authService.signIn(
+      await _authService.signIn(
         _emailController.text,
         _passwordController.text,
       );
-
-      if (!mounted) return;
-
-      // Navigate based on role
-      String route;
-      switch (role) {
-        case 'mechanic':
-          route = '/mechanic_home';
-          break;
-        case 'admin':
-          route = '/admin';
-          break;
-        case 'vehicle_owner':
-        default:
-          route = '/vehicle_owner_home';
-          break;
-      }
-
-      Navigator.pushReplacementNamed(context, route);
+      // We don't need to manually navigate here because `AuthGate` in main.dart
+      // is listening to authStateChanges and will automatically redirect the user.
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

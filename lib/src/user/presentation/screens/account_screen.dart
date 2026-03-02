@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mobileMech/src/auth/services/auth_service.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+    final userName = authService.currentUserName ?? 'User';
+    final userEmail = authService.currentUserEmail ?? 'No email';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Account'),
@@ -14,20 +19,19 @@ class AccountScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         children: [
           // Profile Header
-          const Center(
+          Center(
             child: Column(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.orange,
                   child: Icon(Icons.person, size: 50, color: Colors.white),
                 ),
-                SizedBox(height: 16),
-                Text('John Doe',
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Text('john.doe@example.com',
-                    style: TextStyle(color: Colors.grey)),
+                const SizedBox(height: 16),
+                Text(userName,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold)),
+                Text(userEmail, style: const TextStyle(color: Colors.grey)),
               ],
             ),
           ),
@@ -106,10 +110,12 @@ class AccountScreen extends StatelessWidget {
                   title: const Text('Logout',
                       style: TextStyle(
                           color: Colors.red, fontWeight: FontWeight.bold)),
-                  onTap: () {
-                    // Navigate back to Role Selection (or Login in real app)
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/', (route) => false);
+                  onTap: () async {
+                    await authService.signOut();
+                    if (context.mounted) {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (route) => false);
+                    }
                   },
                 ),
               ],
