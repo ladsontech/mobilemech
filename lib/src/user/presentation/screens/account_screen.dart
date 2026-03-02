@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+
+class AccountScreen extends StatelessWidget {
+  const AccountScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Account'),
+        centerTitle: true,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          // Profile Header
+          const Center(
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.orange,
+                  child: Icon(Icons.person, size: 50, color: Colors.white),
+                ),
+                SizedBox(height: 16),
+                Text('John Doe',
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Text('john.doe@example.com',
+                    style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // Settings Section
+          const Text('Settings',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange)),
+          const SizedBox(height: 12),
+          Card(
+            elevation: 2,
+            color: Colors.white,
+            surfaceTintColor: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.notifications_outlined,
+                      color: Colors.orange),
+                  title: const Text('Notifications'),
+                  trailing: Switch(
+                    value: true,
+                    onChanged: (val) {},
+                    activeColor: Colors.orange,
+                    activeTrackColor: Colors.orange.withOpacity(0.3),
+                  ),
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                ListTile(
+                  leading: const Icon(Icons.dark_mode_outlined,
+                      color: Colors.orange),
+                  title: const Text('Dark Mode'),
+                  trailing: Switch(
+                    value: false,
+                    onChanged: (val) {},
+                    activeColor: Colors.orange,
+                    activeTrackColor: Colors.orange.withOpacity(0.3),
+                  ),
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                const ListTile(
+                  leading: Icon(Icons.language_outlined, color: Colors.orange),
+                  title: Text('Language'),
+                  trailing: Text('English',
+                      style: TextStyle(
+                          color: Colors.grey, fontWeight: FontWeight.w500)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Actions
+          Card(
+            elevation: 2,
+            color: Colors.white,
+            surfaceTintColor: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.edit_outlined, color: Colors.blue),
+                  title: const Text('Edit Profile'),
+                  trailing: const Icon(Icons.arrow_forward_ios,
+                      size: 16, color: Colors.grey),
+                  onTap: () {},
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.red),
+                  title: const Text('Logout',
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold)),
+                  onTap: () {
+                    // Navigate back to Role Selection (or Login in real app)
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/', (route) => false);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
