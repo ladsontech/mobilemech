@@ -1,126 +1,91 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mobileMech/src/user/models/user_profile.dart';
+import 'package:mobileMech/src/user/services/user_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final UserService _userService = UserService();
 
-  /// Get the currently signed-in user.
-  User? get currentUser => _auth.currentUser;
-
-  /// Stream of auth state changes.
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
-
-  /// Sign in with email and password.
-  /// Returns the user's role from Firestore.
-  Future<String> signIn(String email, String password) async {
+  Future<User?> signIn(String email, String password) async {
     try {
-      final credential = await _auth.signInWithEmailAndPassword(
-        email: email.trim(),
+      final result = await _auth.signInWithEmailAndPassword(
+        email: email,
         password: password,
       );
-
-      // Fetch user role from Firestore
-      final userDoc =
-          await _firestore.collection('users').doc(credential.user!.uid).get();
-
-      if (userDoc.exists && userDoc.data() != null) {
-        return userDoc.data()!['role'] as String? ?? 'vehicle_owner';
-      }
-      return 'vehicle_owner';
+      return result.user;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
   }
 
-  /// Register a new user with email, password, name, and role.
-  /// After registration, the user is signed out so they can log in manually.
-  Future<void> register({
+  Future<User?> register({
     required String email,
     required String password,
     required String name,
     required String role,
   }) async {
     try {
-      final credential = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
+      final result = await _auth.createUserWithEmailAndPassword(
+        email: email,
         password: password,
       );
-
-      // Update display name
-      await credential.user!.updateDisplayName(name);
-
-      // Store user data in Firestore
-      await _firestore.collection('users').doc(credential.user!.uid).set({
-        'name': name,
-        'email': email.trim(),
-        'role': role,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      // Sign out after registration so user goes back to login screen
-      await _auth.signOut();
+      final user = result.user;
+      if (user != null) {
+        final userProfile = UserProfile(
+          uid: user.uid,
+          name: name,
+          email: email,
+          role: role,
+        );
+        await _userService.createUserProfile(userProfile);
+      }
+      return user;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
   }
 
-  /// Sign out the current user.
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
-  /// Send a password reset email.
-  Future<void> resetPassword(String email) async {
+  Future<void> sendPasswordResetEmail(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email.trim());
+      await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
   }
 
-  /// Get the role of the current user from Firestore.
   Future<String?> getCurrentUserRole() async {
-    final user = currentUser;
-    if (user == null) return null;
-
-    try {
-      final userDoc = await _firestore.collection('users').doc(user.uid).get();
-
-      if (userDoc.exists && userDoc.data() != null) {
-        return userDoc.data()!['role'] as String?;
-      }
-      return null;
-    } catch (e) {
-      return null;
+    final user = _auth.currentUser;
+    if (user != null) {
+      final userProfile = await _userService.getUserProfile(user.uid);
+      return userProfile?.role;
     }
+    return null;
   }
 
-  /// Get the current user's display name.
-  String? get currentUserName => _auth.currentUser?.displayName;
-
-  /// Get the current user's email.
-  String? get currentUserEmail => _auth.currentUser?.email;
-
-  /// Convert Firebase auth exceptions to user-friendly messages.
   String _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
-      case 'user-not-found':
-        return 'No account found with this email.';
-      case 'wrong-password':
-        return 'Incorrect password.';
-      case 'email-already-in-use':
-        return 'An account already exists with this email.';
-      case 'weak-password':
-        return 'Password is too weak. Use at least 6 characters.';
       case 'invalid-email':
-        return 'Please enter a valid email address.';
-      case 'too-many-requests':
-        return 'Too many attempts. Please try again later.';
-      case 'invalid-credential':
-        return 'Invalid email or password.';
+        return 'The email address is not valid.';
+      case 'user-disabled':
+        return 'This user has been disabled.';
+      case 'user-not-found':
+        return 'No user found for that email.';
+      case 'wrong-password':
+        return 'Wrong password provided.';
+      case 'email-already-in-use':
+        return 'An account already exists for that email.';
+      case 'operation-not-allowed':
+        return 'Email/password accounts are not enabled.';
+      case 'weak-password':
+        return 'The password is too weak.';
       default:
-        return e.message ?? 'An authentication error occurred.';
+        return 'An unknown error occurred.';
     }
   }
 }
