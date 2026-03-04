@@ -8,12 +8,15 @@ import 'package:mobileMech/src/auth/services/auth_service.dart';
 import 'package:mobileMech/src/user/presentation/screens/vehicle_owner_home_screen.dart';
 import 'package:mobileMech/src/user/presentation/screens/mechanic_home_screen.dart';
 import 'package:mobileMech/src/user/presentation/screens/admin_screen.dart';
-import 'package:mobileMech/src/user/presentation/screens/simple_navigation_screen.dart';
 import 'package:mobileMech/src/user/presentation/screens/account_screen.dart';
+import 'package:mobileMech/src/user/presentation/screens/role_selection_screen.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -29,12 +32,19 @@ class MyApp extends StatelessWidget {
       home: const AuthGate(),
       routes: {
         '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegistrationScreen(),
         '/vehicle_owner_home': (context) => const VehicleOwnerHomeScreen(),
         '/mechanic_home': (context) => const MechanicHomeScreen(),
         '/admin': (context) => const AdminScreen(),
         '/account': (context) => const AccountScreen(),
-        '/role_selection': (context) => const RoleSelectionScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/register') {
+          final role = settings.arguments as String? ?? 'vehicle_owner';
+          return MaterialPageRoute(
+            builder: (context) => RegistrationScreen(selectedRole: role),
+          );
+        }
+        return null;
       },
     );
   }
@@ -50,39 +60,47 @@ class MyApp extends StatelessWidget {
 
     return baseTheme.copyWith(
       textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme).copyWith(
-        displayLarge: GoogleFonts.roboto(fontSize: 57, fontWeight: FontWeight.bold),
-        displayMedium: GoogleFonts.roboto(fontSize: 45, fontWeight: FontWeight.bold),
-        displaySmall: GoogleFonts.roboto(fontSize: 36, fontWeight: FontWeight.bold),
-        headlineLarge: GoogleFonts.roboto(fontSize: 32, fontWeight: FontWeight.bold),
-        headlineMedium: GoogleFonts.roboto(fontSize: 28, fontWeight: FontWeight.bold),
-        headlineSmall: GoogleFonts.roboto(fontSize: 24, fontWeight: FontWeight.bold),
-        titleLarge: GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.w500),
-        titleMedium: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.w500),
-        titleSmall: GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w500),
+        displayLarge:
+            GoogleFonts.roboto(fontSize: 57, fontWeight: FontWeight.bold),
+        displayMedium:
+            GoogleFonts.roboto(fontSize: 45, fontWeight: FontWeight.bold),
+        displaySmall:
+            GoogleFonts.roboto(fontSize: 36, fontWeight: FontWeight.bold),
+        headlineLarge:
+            GoogleFonts.roboto(fontSize: 32, fontWeight: FontWeight.bold),
+        headlineMedium:
+            GoogleFonts.roboto(fontSize: 28, fontWeight: FontWeight.bold),
+        headlineSmall:
+            GoogleFonts.roboto(fontSize: 24, fontWeight: FontWeight.bold),
+        titleLarge:
+            GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.w500),
+        titleMedium:
+            GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.w500),
+        titleSmall:
+            GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w500),
       ),
       appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Color(0xFF34495E),
-          elevation: 0,
-          scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF34495E),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF34495E),
+          foregroundColor: Colors.white,
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF34495E),
-            foregroundColor: Colors.white,
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-        cardTheme: const CardTheme(
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-        ),
+      ),
+      cardTheme: const CardTheme(
+        color: Colors.white,
+        surfaceTintColor: Colors.white,
+      ),
     );
   }
 }
-
 
 /// Checks Firebase auth state and routes the user accordingly.
 class AuthGate extends StatelessWidget {
@@ -125,8 +143,8 @@ class AuthGate extends StatelessWidget {
           );
         }
 
-        // Not signed in — show login
-        return const LoginScreen();
+        // Not signed in — show role selection
+        return const RoleSelectionScreen();
       },
     );
   }

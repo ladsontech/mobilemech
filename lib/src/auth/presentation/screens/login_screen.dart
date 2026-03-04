@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'MDER',
+                    'MDER Login',
                     style: textTheme.displaySmall?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/register');
+                      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
                     },
                     child: Text(
                       "Don't have an account? Register",

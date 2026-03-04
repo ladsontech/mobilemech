@@ -94,7 +94,8 @@ class RoleSelectionScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
+                child: Icon(icon,
+                    color: Theme.of(context).colorScheme.primary, size: 28),
               ),
               const SizedBox(width: 20),
               Text(

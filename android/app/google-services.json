@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "827408901014",
+    "project_id": "mobilemech-e623a",
+    "storage_bucket": "mobilemech-e623a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827408901014:android:b2a6a78c9f8c9e412d33b7",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7S_smgrKNOLpYoWkW0GL5EHVujmtbBMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

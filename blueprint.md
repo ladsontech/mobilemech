@@ -1,99 +1,30 @@
-# MobileMech App Blueprint
+# Project Blueprint
 
 ## Overview
 
-A Flutter application that connects vehicle owners with mobile mechanics for on-demand roadside assistance.
+This document outlines the architecture, features, and implementation details of the MDER Flutter application. It serves as a single source of truth for the project's design and development.
 
-## Project Structure (Feature-first)
+## Style and Design
 
-```
-lib/
-├── src/
-│   ├── auth/
-│   │   ├── data/
-│   │   │   └── models/
-│   │   │   └── repositories/
-│   │   ├── domain/
-│   │   │   └── usecases/
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       ├── screens/
-│   │       └── widgets/
-│   ├── core/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   └── widgets/
-│   ├── jobs/
-│   │   ├── data/
-│   │   │   └── models/
-│   │   │   └── repositories/
-│   │   ├── domain/
-│   │   │   └── usecases/
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       ├── screens/
-│   │       └── widgets/
-│   ├── map/
-│   │   ├── data/
-│   │   │   └── repositories/
-│   │   ├── domain/
-│   │   │   └── usecases/
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       ├── screens/
-│   │       └── widgets/
-│   ├── user/
-│   │   ├── data/
-│   │   │   └── models/
-│   │   │   └── repositories/
-│   │   ├── domain/
-│   │   │   └── usecases/
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       ├── screens/
-│   │       └── widgets/
-│   └── main.dart
-└── pubspec.yaml
-```
+The application follows the Material Design 3 guidelines, with a modern and visually appealing interface. The color scheme is based on a seed color of `0xFF34495E`, and the typography uses the Lato and Roboto fonts from the `google_fonts` package. The UI is designed to be mobile-responsive and accessible to all users.
 
-## MVP Plan
+## Features
 
-### 1. Project Setup
-- Create the Flutter project.
-- Set up the folder structure.
-- Add necessary dependencies to `pubspec.yaml` (e.g., `firebase_auth`, `cloud_firestore`, `google_maps_flutter`, `provider`).
+### Authentication
 
-### 2. Authentication
-- Implement email/password authentication.
-- Create user roles (`vehicle_owner`, `mechanic`).
-- Implement role-based access control.
+*   **Login:** Users can log in with their email and password.
+*   **Registration:** New users can register as either a "Vehicle Owner" or a "Mechanic."
+*   **Role-Based Routing:** After logging in, users are routed to the appropriate home screen based on their role.
+*   **Welcome Screen:** A new welcome screen has been implemented to provide a clear entry point for unauthenticated users.
 
-### 3. Vehicle Owner Flow
-- Implement location sharing.
-- Create the "request a mechanic" form.
-- Implement mechanic tracking on the map.
-- Implement job completion and rating.
+### User Management
 
-### 4. Mobile Mechanic Flow
-- Implement availability status (Online/Offline).
-- Implement real-time location sharing.
-- Implement job request notifications.
-- Implement job acceptance/rejection.
-- Implement navigation to the user's location.
-- Implement job completion.
+*   **Account Screen:** Users can view their account information and log out.
 
-### 5. Admin Flow
-- Create a simple admin dashboard (can be a hidden screen in the app for the MVP).
-- Display lists of users and mechanics.
-- Implement mechanic approval/deactivation.
-- Display all job requests and their statuses.
+## Current Plan
 
-### 6. Location & Matching
-- Implement real-time location tracking for both users and mechanics.
-- Implement the matching logic to find the nearest available mechanic.
+I have just completed a major refactoring of the user authentication flow. The following changes have been implemented:
 
-### 7. Map & UI
-- Integrate Google Maps.
-- Display user and mechanic markers.
-- Implement live location updates on the map.
-- Design and build the UI for all screens.
+*   **Welcome Screen:** A new welcome screen has been created to replace the previous role selection screen.
+*   **Streamlined Registration:** The registration process has been simplified by passing the user's role as a parameter.
+*   **Improved Navigation:** The login screen has been updated to clear the navigation stack and prevent users from navigating back to the login screen after logging out.

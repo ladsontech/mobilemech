@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobileMech/src/auth/services/auth_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({super.key});
+  final String selectedRole;
+
+  const RegistrationScreen({super.key, required this.selectedRole});
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -14,7 +16,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authService = AuthService();
-  String _selectedRole = 'vehicle_owner';
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -36,7 +37,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         email: _emailController.text,
         password: _passwordController.text,
         name: _nameController.text.trim(),
-        role: _selectedRole,
+        role: widget.selectedRole,
       );
 
       if (!mounted) return;
@@ -49,7 +50,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       );
 
-      Navigator.of(context).pop();
+      // Navigate to the login screen, removing all previous routes
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -69,10 +71,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final roleText =
+        widget.selectedRole == 'vehicle_owner' ? 'Vehicle Owner' : 'Mechanic';
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: Text('Register as $roleText'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -96,14 +100,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.car_repair,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(height: 8),
                   Text(
-                    'Create Account',
+                    'Create Your Account',
                     style: textTheme.displaySmall?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -111,7 +109,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _nameController,
-                    decoration: _inputDecoration('Full Name', Icons.person_outlined),
+                    decoration:
+                        _inputDecoration('Full Name', Icons.person_outlined),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your name';
@@ -138,10 +137,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    decoration: _inputDecoration('Password', Icons.lock_outlined).copyWith(
+                    decoration:
+                        _inputDecoration('Password', Icons.lock_outlined)
+                            .copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         onPressed: () {
@@ -159,22 +162,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _selectedRole,
-                    decoration: _inputDecoration('Role', Icons.badge_outlined),
-                    items: const [
-                      DropdownMenuItem(
-                          value: 'vehicle_owner', child: Text('Vehicle Owner')),
-                      DropdownMenuItem(
-                          value: 'mechanic', child: Text('Mechanic')),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() => _selectedRole = value);
-                      }
-                    },
-                  ),
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
@@ -190,17 +177,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Register', style: TextStyle(fontSize: 16)),
+                          : const Text('Register',
+                              style: TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/login', (route) => false);
                     },
                     child: Text(
                       'Already have an account? Login',
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ],
