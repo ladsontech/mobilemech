@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobileMech/src/auth/presentation/screens/login_screen.dart';
 import 'package:mobileMech/src/auth/presentation/screens/registration_screen.dart';
 import 'package:mobileMech/src/auth/services/auth_service.dart';
@@ -24,34 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MDER',
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.orange,
-          brightness: Brightness.light,
-          surface: Colors.white,
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.orange,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange,
-            foregroundColor: Colors.white,
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-        cardTheme: const CardTheme(
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-        ),
-      ),
+      theme: _buildTheme(),
       home: const AuthGate(),
       routes: {
         '/login': (context) => const LoginScreen(),
@@ -64,7 +38,51 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+
+  ThemeData _buildTheme() {
+    final baseTheme = ThemeData.from(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF34495E),
+        brightness: Brightness.light,
+      ),
+      useMaterial3: true,
+    );
+
+    return baseTheme.copyWith(
+      textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme).copyWith(
+        displayLarge: GoogleFonts.roboto(fontSize: 57, fontWeight: FontWeight.bold),
+        displayMedium: GoogleFonts.roboto(fontSize: 45, fontWeight: FontWeight.bold),
+        displaySmall: GoogleFonts.roboto(fontSize: 36, fontWeight: FontWeight.bold),
+        headlineLarge: GoogleFonts.roboto(fontSize: 32, fontWeight: FontWeight.bold),
+        headlineMedium: GoogleFonts.roboto(fontSize: 28, fontWeight: FontWeight.bold),
+        headlineSmall: GoogleFonts.roboto(fontSize: 24, fontWeight: FontWeight.bold),
+        titleLarge: GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.w500),
+        titleMedium: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.w500),
+        titleSmall: GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w500),
+      ),
+      appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Color(0xFF34495E),
+          elevation: 0,
+          scrolledUnderElevation: 0,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF34495E),
+            foregroundColor: Colors.white,
+            elevation: 2,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        cardTheme: const CardTheme(
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+        ),
+    );
+  }
 }
+
 
 /// Checks Firebase auth state and routes the user accordingly.
 class AuthGate extends StatelessWidget {
