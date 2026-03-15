@@ -25,6 +25,7 @@ class AuthService {
     required String password,
     required String name,
     required String role,
+    required String phone,
   }) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
@@ -38,6 +39,7 @@ class AuthService {
           name: name,
           email: email,
           role: role,
+          phone: phone,
         );
         await _userService.createUserProfile(userProfile);
       }

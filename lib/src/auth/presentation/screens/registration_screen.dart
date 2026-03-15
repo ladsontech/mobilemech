@@ -14,6 +14,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController(text: '+256');
   final _passwordController = TextEditingController();
   final _authService = AuthService();
   bool _isLoading = false;
@@ -23,6 +24,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -38,6 +40,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         password: _passwordController.text,
         name: _nameController.text.trim(),
         role: widget.selectedRole,
+        phone: _phoneController.text.trim(),
       );
 
       if (!mounted) return;
@@ -129,6 +132,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       }
                       if (!value.contains('@')) {
                         return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration:
+                        _inputDecoration('Phone Number', Icons.phone_outlined),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your phone number';
                       }
                       return null;
                     },

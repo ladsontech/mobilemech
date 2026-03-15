@@ -8,12 +8,14 @@ class UserProfile {
   final String name;
   final String email;
   final String role;
+  final String phone;
 
   UserProfile({
     required this.uid,
     required this.name,
     required this.email,
     required this.role,
+    required this.phone,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) =>

@@ -208,6 +208,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         name: _nameController.text.trim(),
         email: widget.userProfile.email,
         role: widget.userProfile.role,
+        phone: widget.userProfile.phone,
       );
       await _userService.updateUserProfile(updatedProfile);
 
